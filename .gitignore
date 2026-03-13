@@ -1,0 +1,35 @@
+## Ignorar archivos de compilación
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+## Visual Studio Code
+.vscode/
+*.code-workspace
+
+## Ignorar migraciones de prueba
+Migrations/
+
+## Archivos de usuario
+*.user
+*.suo
+
+## Logs
+*.log
+
+## Dependencias
+.nuget/
+packages/
+
+## Archivos de configuración sensibles
+appsettings.Production.json
+
+## Sistema operativo
+.DS_Store
+Thumbs.db
+
+## IDE
+.idea/
+.vs/
