@@ -69,7 +69,7 @@ namespace ParkingSystemAPI.Data
                 new Vehiculo
                 {
                     Placa = "PQR321",
-                    Tipo = "Motocicleta",
+                    Tipo = "Moto",
                     Color = "Plateado",
                     Estado = "Fuera",
                     FechaCreacion = DateTime.Now,
@@ -105,7 +105,7 @@ namespace ParkingSystemAPI.Data
                 new Vehiculo
                 {
                     Placa = "GHI222",
-                    Tipo = "Motocicleta",
+                    Tipo = "Moto",
                     Color = "Naranja",
                     Estado = "Fuera",
                     FechaCreacion = DateTime.Now,
