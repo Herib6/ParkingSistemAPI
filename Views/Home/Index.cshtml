@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Parking System</title>
+    <title>Dashboard - PARKINGPRO</title>
     <style>
         * {
             margin: 0;
@@ -13,162 +13,332 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #f0f0f0;
         }
 
         .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #8B2E2E 0%, #A63D3D 100%);
             color: white;
             padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
         }
 
-        .navbar h1 {
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
         .navbar-right {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             align-items: center;
         }
 
-        .navbar-right span {
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 14px;
+        }
+
+        .user-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
 
         .logout-btn {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s;
-            font-weight: 600;
-        }
-
-        .logout-btn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .welcome-section {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 40px;
-        }
-
-        .welcome-section h2 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .welcome-section p {
-            color: #888;
-            line-height: 1.6;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .card h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .card p {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .card-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #d63031;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: 600;
             text-decoration: none;
-            display: inline-block;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
         }
 
-        .card-btn:hover {
-            opacity: 0.9;
+        .logout-btn:hover {
+            background-color: #c41e1e;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #8B2E2E;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modules-section {
+            margin-top: 50px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border-top: 5px solid #8B2E2E;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .module-header {
+            background: linear-gradient(135deg, #f5f5f5 0%, #f0f0f0 100%);
+            padding: 25px;
+            text-align: center;
+        }
+
+        .module-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .module-title {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .module-description {
+            color: #999;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .module-footer {
+            padding: 20px 25px;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #8B2E2E 0%, #A63D3D 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(139, 46, 46, 0.3);
+        }
+
+        @@media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+
+            .navbar-left {
+                font-size: 20px;
+            }
+
+            .navbar-right {
+                width: 100%;
+                justify-content: space-between;
+                gap: 15px;
+            }
+
+            .container {
+                margin-top: 150px;
+            }
+
+            .stats-grid,
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <h1>🅿️ Parking System - Dashboard</h1>
+        <div class="navbar-left">
+            <span>🚗</span>
+            <span>PARKINGPRO</span>
+        </div>
         <div class="navbar-right">
-            <span>Bienvenido, <strong>@Context.Session.GetString("NombreUsuario")</strong></span>
+            <div class="user-info">
+                <div class="user-icon">👤</div>
+                <div>
+                    <div style="font-size: 12px; opacity: 0.8;">Usuario</div>
+                    <strong>@Context.Session.GetString("NombreUsuario")</strong>
+                </div>
+            </div>
             <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Cerrar Sesión</a>
         </div>
     </div>
 
     <div class="container">
-        <div class="welcome-section">
-            <h2>¡Bienvenido al Sistema de Gestión de Estacionamiento!</h2>
-            <p>Usa el menú a continuación para acceder a las diferentes funcionalidades del sistema.</p>
+        <div class="page-header">
+            <h1>Dashboard Principal</h1>
+            <p>Sistema de Gestión de Estacionamiento</p>
         </div>
 
-        <div class="dashboard-grid">
-            <div class="card">
-                <div class="card-icon">🚗</div>
-                <h3>Vehículos</h3>
-                <p>Gestiona el registro de vehículos</p>
-                <a href="@Url.Action("Index", "Vehiculos")" class="card-btn">Ver Vehículos</a>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-number">0</div>
+                <div class="stat-label">Registros Totales</div>
             </div>
-
-            <div class="card">
-                <div class="card-icon">🅿️</div>
-                <h3>Espacios</h3>
-                <p>Consulta la disponibilidad de espacios</p>
-                <a href="@Url.Action("Index", "Espacios")" class="card-btn">Ver Espacios</a>
+            <div class="stat-card">
+                <div class="stat-icon">🚗</div>
+                <div class="stat-number">0</div>
+                <div class="stat-label">Vehículos Registrados</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-icon">📍</div>
+                <div class="stat-number">0</div>
+                <div class="stat-label">Espacios Disponibles</div>
+            </div>
+        </div>
 
-            <div class="card">
-                <div class="card-icon">📊</div>
-                <h3>Registros</h3>
-                <p>Historial de entradas y salidas</p>
-                <a href="@Url.Action("Index", "Registros")" class="card-btn">Ver Registros</a>
+        <div class="modules-section">
+            <h2 class="section-title">Módulos de Gestión</h2>
+            
+            <div class="module-grid">
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">🚗</span>
+                        <h3 class="module-title">Gestión de Vehículos</h3>
+                        <p class="module-description">Registra, edita y visualiza información de todos los vehículos</p>
+                    </div>
+                    <div class="module-footer">
+                        <a href="@Url.Action("Index", "Vehiculos")" class="btn-action">Acceder</a>
+                    </div>
+                </div>
+
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">📍</span>
+                        <h3 class="module-title">Gestión de Espacios</h3>
+                        <p class="module-description">Visualiza la disponibilidad y registra entrada/salida de vehículos</p>
+                    </div>
+                    <div class="module-footer">
+                        <a href="@Url.Action("Index", "Espacios")" class="btn-action">Acceder</a>
+                    </div>
+                </div>
+
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">📊</span>
+                        <h3 class="module-title">Historial de Movimientos</h3>
+                        <p class="module-description">Consulta todos los registros de entrada y salida de vehículos</p>
+                    </div>
+                    <div class="module-footer">
+                        <a href="@Url.Action("Index", "Registros")" class="btn-action">Acceder</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </body>
 </html>
+
+

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Parking System</title>
+    <title>Login - ParkingPro</title>
     <style>
         * {
             margin: 0;
@@ -13,77 +13,109 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .login-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        .login-wrapper {
             width: 100%;
-            max-width: 400px;
-            padding: 40px;
+            min-height: 100vh;
+            display: flex;
         }
 
-        .login-container h1 {
+        .login-left {
+            flex: 1;
+            background: linear-gradient(135deg, #8B2E2E 0%, #A63D3D 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .logo-section {
             text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
+            margin-bottom: 50px;
         }
 
-        .login-container .subtitle {
-            text-align: center;
-            color: #888;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .form-group {
+        .logo-icon {
+            font-size: 80px;
             margin-bottom: 20px;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
+        .logo-section h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        .logo-section p {
+            font-size: 18px;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .features {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .feature {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .feature-text h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .feature-text p {
             font-size: 14px;
-            transition: border-color 0.3s;
+            opacity: 0.85;
         }
 
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        .login-right {
+            flex: 1;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
         }
 
-        .login-btn {
+        .login-form {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
+            max-width: 400px;
         }
 
-        .login-btn:hover {
-            transform: translateY(-2px);
+        .form-title {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .form-title h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .form-title p {
+            color: #999;
+            font-size: 14px;
         }
 
         .error-message {
@@ -104,75 +136,178 @@
             border-left: 4px solid #3c3;
         }
 
-        .signup-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #888;
+        .form-group {
+            margin-bottom: 25px;
+            margin-top: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
             font-size: 14px;
         }
 
-        .signup-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
         }
 
-        .signup-link a:hover {
+        .form-group input:focus {
+            outline: none;
+            border-color: #8B2E2E;
+            box-shadow: 0 0 0 3px rgba(139, 46, 46, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8B2E2E 0%, #A63D3D 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 46, 46, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-footer a {
+            color: #8B2E2E;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .form-footer a:hover {
             text-decoration: underline;
         }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        @@media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
 
-        .logo i {
-            font-size: 40px;
-            color: #667eea;
+            .login-left {
+                min-height: 200px;
+                padding: 30px 20px;
+            }
+
+            .logo-section {
+                margin-bottom: 30px;
+            }
+
+            .logo-section h1 {
+                font-size: 36px;
+            }
+
+            .features {
+                margin-top: 20px;
+                gap: 20px;
+            }
+
+            .login-right {
+                min-height: auto;
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">
-            🅿️
-        </div>
-        <h1>Parking System</h1>
-        <p class="subtitle">Sistema de Gestión de Estacionamiento</p>
-
-        @if (!string.IsNullOrEmpty(ViewBag.Error))
-        {
-            <div class="error-message">@ViewBag.Error</div>
-        }
-
-        @if (!string.IsNullOrEmpty(ViewBag.Success))
-        {
-            <div class="success-message">@ViewBag.Success</div>
-        }
-
-        <form method="post" action="@Url.Action("Login", "Auth")">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+    <div class="login-wrapper">
+        <div class="login-left">
+            <div class="logo-section">
+                <div class="logo-icon">🚗</div>
+                <h1>PARKINGPRO</h1>
+                <p>Sistema de Gestión de Estacionamiento</p>
             </div>
-
-            <div class="form-group">
-                <label for="contrasena">Contraseña</label>
-                <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">📍</div>
+                    <div class="feature-text">
+                        <h3>Gestión Completa</h3>
+                        <p>Controla entrada y salida de vehículos automáticamente</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-text">
+                        <h3>Cálculo de Tarifas</h3>
+                        <p>Tarificación automática según tiempo de estancia</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-text">
+                        <h3>Reportes Detallados</h3>
+                        <p>Visualiza movimientos e ingresos en tiempo real</p>
+                    </div>
+                </div>
             </div>
-
-            <button type="submit" class="login-btn">Iniciar Sesión</button>
-        </form>
-
-        <div class="signup-link">
-            ¿No tienes cuenta? <a href="@Url.Action("Register", "Auth")">Regístrate aquí</a>
         </div>
 
-        <div class="signup-link" style="margin-top: 30px; font-size: 12px; color: #aaa;">
-            <strong>Credenciales de prueba:</strong><br>
-            Email: admin@parking.com<br>
-            Contraseña: admin123
+        <div class="login-right">
+            <div class="login-form">
+                <div class="form-title">
+                    <h2>Bienvenido</h2>
+                    <p>Inicia sesión en tu cuenta</p>
+                </div>
+
+                @if (!string.IsNullOrEmpty(ViewBag.Error))
+                {
+                    <div class="error-message">@ViewBag.Error</div>
+                }
+
+                @if (!string.IsNullOrEmpty(ViewBag.Success))
+                {
+                    <div class="success-message">@ViewBag.Success</div>
+                }
+
+                <form method="post" action="@Url.Action("Login", "Auth")">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contrasena">Contraseña</label>
+                        <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required>
+                    </div>
+
+                    <button type="submit" class="btn-login">Iniciar Sesión</button>
+                </form>
+
+                <div class="form-footer">
+                    ¿No tienes cuenta?
+                    <a href="@Url.Action("Register", "Auth")">Regístrate aquí</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 </html>
+
+

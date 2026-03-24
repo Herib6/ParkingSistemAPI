@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrarse - Parking System</title>
+    <title>Registro - ParkingPro</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,17 +24,41 @@
         .register-container {
             background: white;
             border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 45px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 400px;
-            padding: 40px;
+            max-width: 500px;
+            padding: 50px 40px;
         }
 
-        .register-container h1 {
+        .register-header {
             text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .register-header .logo {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .register-header h1 {
             color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .register-header p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background-color: #fee;
+            color: #c33;
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            border-left: 4px solid #c33;
+            font-size: 13px;
         }
 
         .form-group {
@@ -46,70 +70,85 @@
             margin-bottom: 8px;
             color: #333;
             font-weight: 600;
+            font-size: 14px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
             border-radius: 5px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            font-family: inherit;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+            border-color: #8B2E2E;
+            box-shadow: 0 0 0 3px rgba(139, 46, 46, 0.1);
         }
 
-        .register-btn {
+        .btn-register {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 14px;
+            background: linear-gradient(135deg, #8B2E2E 0%, #A63D3D 100%);
             color: white;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            margin-top: 25px;
+            transition: all 0.3s;
         }
 
-        .register-btn:hover {
+        .btn-register:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 46, 46, 0.3);
         }
 
-        .error-message {
-            background-color: #fee;
-            color: #c33;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border-left: 4px solid #c33;
+        .btn-register:active {
+            transform: translateY(0);
         }
 
-        .login-link {
+        .register-footer {
             text-align: center;
-            margin-top: 20px;
-            color: #888;
+            margin-top: 25px;
+            color: #666;
             font-size: 14px;
         }
 
-        .login-link a {
-            color: #667eea;
+        .register-footer a {
+            color: #8B2E2E;
             text-decoration: none;
             font-weight: 600;
+            margin-left: 5px;
         }
 
-        .login-link a:hover {
+        .register-footer a:hover {
             text-decoration: underline;
+        }
+
+        @@media (max-width: 768px) {
+            .register-container {
+                max-width: 100%;
+                padding: 30px 20px;
+            }
+
+            .register-header h1 {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="register-container">
-        <h1>Crear Cuenta</h1>
+        <div class="register-header">
+            <div class="logo">🚗</div>
+            <h1>Crear Cuenta</h1>
+            <p>Únete a PARKINGPRO hoy</p>
+        </div>
 
         @if (!string.IsNullOrEmpty(ViewBag.Error))
         {
@@ -119,7 +158,7 @@
         <form method="post" action="@Url.Action("Register", "Auth")">
             <div class="form-group">
                 <label for="nombre">Nombre Completo</label>
-                <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+                <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" required>
             </div>
 
             <div class="form-group">
@@ -137,12 +176,15 @@
                 <input type="password" id="confirmarContrasena" name="confirmarContrasena" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="register-btn">Registrarse</button>
+            <button type="submit" class="btn-register">Registrarse</button>
         </form>
 
-        <div class="login-link">
-            ¿Ya tienes cuenta? <a href="@Url.Action("Login", "Auth")">Inicia sesión aquí</a>
+        <div class="register-footer">
+            ¿Ya tienes cuenta?
+            <a href="@Url.Action("Login", "Auth")">Inicia sesión aquí</a>
         </div>
     </div>
 </body>
 </html>
+
+
