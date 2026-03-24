@@ -172,18 +172,37 @@
             gap: 15px;
         }
 
+        .parking-grid.motos {
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        }
+
         .parking-space {
             aspect-ratio: 1;
             border-radius: 12px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 20px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 3px solid transparent;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            gap: 4px;
+        }
+
+        .parking-space .space-icon {
+            font-size: 24px;
+        }
+
+        .parking-grid.motos .parking-space .space-icon {
+            font-size: 18px;
+        }
+
+        .parking-grid.motos .parking-space {
+            font-size: 12px;
         }
 
         .parking-space:hover {
@@ -498,16 +517,21 @@
         <div class="main-grid">
             <!-- GRID DE ESPACIOS -->
             <div class="parking-section">
-                <div class="section-title">🚗 Distribución de Espacios</div>
-                @if (Model != null && Model.Any())
+                <!-- ESPACIOS PARA CARROS -->
+                <div class="section-title"><i class="fas fa-car"></i> Espacios para Carros</div>
+                @{
+                    var espaciosCarros = Model?.Where(e => e.TipoEspacio == "Carro" || string.IsNullOrEmpty(e.TipoEspacio)).OrderBy(e => e.Numero).ToList();
+                }
+                @if (espaciosCarros != null && espaciosCarros.Any())
                 {
                     <div class="parking-grid">
-                        @foreach (var espacio in Model.OrderBy(e => e.Numero))
+                        @foreach (var espacio in espaciosCarros)
                         {
                             <div class="parking-space @(espacio.Estado == "Disponible" ? "disponible" : "ocupado")"
                                  onclick="manejarClickEspacio(@espacio.Id, @espacio.Numero, '@espacio.Estado')"
                                  title="Espacio @espacio.Numero - @espacio.Estado">
-                                @espacio.Numero
+                                <i class="fas fa-car space-icon"></i>
+                                <span>@espacio.Numero</span>
                             </div>
                         }
                     </div>
@@ -515,8 +539,35 @@
                 else
                 {
                     <div class="empty-message">
-                        <div class="empty-icon"><i class="fas fa-parking"></i></div>
-                        <p>No hay espacios disponibles</p>
+                        <div class="empty-icon"><i class="fas fa-car"></i></div>
+                        <p>No hay espacios para carros</p>
+                    </div>
+                }
+
+                <!-- ESPACIOS PARA MOTOS -->
+                <div class="section-title" style="margin-top: 40px;"><i class="fas fa-motorcycle"></i> Espacios para Motos</div>
+                @{
+                    var espaciosMotos = Model?.Where(e => e.TipoEspacio == "Moto").OrderBy(e => e.Numero).ToList();
+                }
+                @if (espaciosMotos != null && espaciosMotos.Any())
+                {
+                    <div class="parking-grid motos">
+                        @foreach (var espacio in espaciosMotos)
+                        {
+                            <div class="parking-space @(espacio.Estado == "Disponible" ? "disponible" : "ocupado")"
+                                 onclick="manejarClickEspacio(@espacio.Id, @espacio.Numero, '@espacio.Estado')"
+                                 title="Espacio @espacio.Numero - @espacio.Estado">
+                                <i class="fas fa-motorcycle space-icon"></i>
+                                <span>@espacio.Numero</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-message">
+                        <div class="empty-icon"><i class="fas fa-motorcycle"></i></div>
+                        <p>No hay espacios para motos</p>
                     </div>
                 }
             </div>

@@ -54,7 +54,6 @@ namespace ParkingSystemAPI.Controllers
         }
 
         [HttpGet]
-        [HttpGet]
         public IActionResult GetVehiculosDisponibles(string? tipoEspacio = "Carro")
         {
             // Obtener vehículos que NO están dentro (sin registro activo)
@@ -64,10 +63,20 @@ namespace ParkingSystemAPI.Controllers
                 .Distinct()
                 .ToList();
 
-            var vehiculosDisponibles = _context.Vehiculos
-                .Where(v => !vehiculosAdentro.Contains(v.Id) && v.Tipo == tipoEspacio)
-                .ToList();
+            IQueryable<Vehiculo> query = _context.Vehiculos
+                .Where(v => !vehiculosAdentro.Contains(v.Id));
 
+            // Filtrar por tipo de espacio
+            if (tipoEspacio == "Moto")
+            {
+                query = query.Where(v => v.Tipo == "Moto");
+            }
+            else // Carro
+            {
+                query = query.Where(v => v.Tipo == "Auto" || v.Tipo == "SUV" || v.Tipo == "Camión" || v.Tipo == "Otro");
+            }
+
+            var vehiculosDisponibles = query.ToList();
             return Json(new { success = true, vehiculos = vehiculosDisponibles });
         }
 
