@@ -206,5 +206,66 @@ namespace ParkingSystemAPI.Controllers
                 return Json(new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpPost]
+        public IActionResult GenerarEspaciosDePrueba()
+        {
+            try
+            {
+                // Obtener el número máximo actual de espacios
+                var numeroMaximo = _context.Espacios.Max(e => (int?)e.Numero) ?? 0;
+                var sensorMaximo = _context.Espacios.Max(e => (int?)e.SensorId) ?? 0;
+
+                // Generar 20 espacios para carros
+                for (int i = 1; i <= 20; i++)
+                {
+                    var numero = numeroMaximo + i;
+                    var sensor = sensorMaximo + i;
+                    
+                    if (!_context.Espacios.Any(e => e.Numero == numero))
+                    {
+                        _context.Espacios.Add(new Espacio
+                        {
+                            Numero = numero,
+                            Estado = "Disponible",
+                            TipoEspacio = "Carro",
+                            SensorId = sensor
+                        });
+                    }
+                }
+
+                // Generar 20 espacios para motos
+                for (int i = 1; i <= 20; i++)
+                {
+                    var numero = numeroMaximo + 20 + i;
+                    var sensor = sensorMaximo + 20 + i;
+                    
+                    if (!_context.Espacios.Any(e => e.Numero == numero))
+                    {
+                        _context.Espacios.Add(new Espacio
+                        {
+                            Numero = numero,
+                            Estado = "Disponible",
+                            TipoEspacio = "Moto",
+                            SensorId = sensor
+                        });
+                    }
+                }
+
+                _context.SaveChanges();
+                var totalCarros = _context.Espacios.Count(e => e.TipoEspacio == "Carro");
+                var totalMotos = _context.Espacios.Count(e => e.TipoEspacio == "Moto");
+                
+                return Json(new 
+                { 
+                    success = true, 
+                    message = $"Espacios de prueba generados correctamente. Total Carros: {totalCarros}, Total Motos: {totalMotos}" 
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
     }
 }
