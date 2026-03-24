@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ParkingSystemAPI.Data;
 
 namespace ParkingSystemAPI.Controllers
@@ -18,10 +19,15 @@ namespace ParkingSystemAPI.Controllers
             if (string.IsNullOrEmpty(usuarioId))
                 return RedirectToAction("Login", "Auth");
 
-            var registros = _context.Registros.AsQueryable();
+            var registros = _context.Registros.Include(r => r.Vehiculo).AsQueryable();
 
             if (!string.IsNullOrEmpty(buscar))
-                registros = registros.Where(r => r.VehiculoId.ToString().Contains(buscar));
+            {
+                buscar = buscar.ToUpper().Trim();
+                registros = registros.Where(r => 
+                    r.VehiculoId.ToString().Contains(buscar) || 
+                    r.Vehiculo.Placa.ToUpper().Contains(buscar));
+            }
 
             if (!string.IsNullOrEmpty(fechaInicio) && DateTime.TryParse(fechaInicio, out var inicio))
                 registros = registros.Where(r => r.FechaEntrada >= inicio);
