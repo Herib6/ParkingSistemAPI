@@ -215,6 +215,11 @@
             color: white;
         }
 
+        .parking-space.reservado {
+            background: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
+            color: white;
+        }
+
         .parking-space.ocupado {
             background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
             color: white;
@@ -527,9 +532,22 @@
                     <div class="parking-grid">
                         @foreach (var espacio in espaciosCarros)
                         {
-                            <div class="parking-space @(espacio.Estado == "Disponible" ? "disponible" : "ocupado")"
+                            string estadoClass = "disponible";
+                            string estadoDisplay = "Disponible";
+                            
+                            if (espacio.SensorActivado)
+                            {
+                                estadoClass = "ocupado";
+                                estadoDisplay = "Sensor Activo";
+                            }
+                            else if (espacio.Estado == "Ocupado")
+                            {
+                                estadoClass = "reservado";
+                                estadoDisplay = "Reservado";
+                            }
+                            <div class="parking-space @estadoClass"
                                  onclick="manejarClickEspacio(@espacio.Id, @espacio.Numero, '@espacio.Estado')"
-                                 title="Espacio @espacio.Numero - @espacio.Estado">
+                                 title="Espacio @espacio.Numero - @estadoDisplay (Sensor: @espacio.SensorId)">
                                 <i class="fas fa-car space-icon"></i>
                                 <span>@espacio.Numero</span>
                             </div>
@@ -554,9 +572,22 @@
                     <div class="parking-grid motos">
                         @foreach (var espacio in espaciosMotos)
                         {
-                            <div class="parking-space @(espacio.Estado == "Disponible" ? "disponible" : "ocupado")"
+                            string estadoClass = "disponible";
+                            string estadoDisplay = "Disponible";
+                            
+                            if (espacio.SensorActivado)
+                            {
+                                estadoClass = "ocupado";
+                                estadoDisplay = "Sensor Activo";
+                            }
+                            else if (espacio.Estado == "Ocupado")
+                            {
+                                estadoClass = "reservado";
+                                estadoDisplay = "Reservado";
+                            }
+                            <div class="parking-space @estadoClass"
                                  onclick="manejarClickEspacio(@espacio.Id, @espacio.Numero, '@espacio.Estado')"
-                                 title="Espacio @espacio.Numero - @espacio.Estado">
+                                 title="Espacio @espacio.Numero - @estadoDisplay (Sensor: @espacio.SensorId)">
                                 <i class="fas fa-motorcycle space-icon"></i>
                                 <span>@espacio.Numero</span>
                             </div>

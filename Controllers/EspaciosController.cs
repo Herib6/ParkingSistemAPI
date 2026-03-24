@@ -276,5 +276,47 @@ namespace ParkingSystemAPI.Controllers
                 return Json(new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpPost]
+        public IActionResult ActivarSensor(int espacioId)
+        {
+            try
+            {
+                var espacio = _context.Espacios.FirstOrDefault(e => e.Id == espacioId);
+                if (espacio == null)
+                    return Json(new { success = false, message = "Espacio no encontrado" });
+
+                espacio.SensorActivado = true;
+                espacio.Estado = "Ocupado";
+                _context.SaveChanges();
+
+                return Json(new { success = true, message = $"Sensor del espacio {espacio.Numero} activado" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DesactivarSensor(int espacioId)
+        {
+            try
+            {
+                var espacio = _context.Espacios.FirstOrDefault(e => e.Id == espacioId);
+                if (espacio == null)
+                    return Json(new { success = false, message = "Espacio no encontrado" });
+
+                espacio.SensorActivado = false;
+                espacio.Estado = "Disponible";
+                _context.SaveChanges();
+
+                return Json(new { success = true, message = $"Sensor del espacio {espacio.Numero} desactivado" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
     }
 }

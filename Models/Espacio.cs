@@ -7,5 +7,6 @@ namespace ParkingSystemAPI.Models
         public string? Estado { get; set; }
         public string? TipoEspacio { get; set; } = "Carro"; // "Carro" o "Moto"
         public int SensorId { get; set; }
+        public bool SensorActivado { get; set; } = false; // True = sensor detecta ocupación
     }
 }
