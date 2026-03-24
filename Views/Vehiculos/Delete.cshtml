@@ -10,6 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -181,7 +182,7 @@
     <div class="container">
         <a href="@Url.Action("Index")" class="back-link">← Volver a Vehículos</a>
 
-        <div class="warning-icon">⚠️</div>
+        <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
         <h1>Eliminar Vehículo</h1>
 
         <div class="vehicle-card">
@@ -213,7 +214,7 @@
         </div>
 
         <div class="danger-message">
-            <div class="danger-title">⚠️ Aviso Importante</div>
+            <div class="danger-title"><i class="fas fa-exclamation-triangle"></i> Aviso Importante</div>
             <ul class="danger-list">
                 <li>Esta acción <strong>no se puede deshacer</strong></li>
                 <li>Se eliminarán todos los datos asociados a este vehículo</li>

@@ -14,6 +14,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -44,6 +45,23 @@
         .navbar h1 {
             font-size: 24px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-logo {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #8B2E2E;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .navbar-right {
@@ -509,7 +527,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>🚗 Gestión de Vehículos</h1>
+        <h1><div class="navbar-logo"><i class="fas fa-car"></i></div> Gestión de Vehículos</h1>
         <div class="navbar-right">
             <span>Bienvenido</span>
             <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Cerrar Sesión</a>
@@ -536,7 +554,7 @@
             <div class="search-box">
                 <form method="GET" style="display: flex; gap: 10px;">
                     <input type="text" name="buscar" placeholder="Buscar por placa..." value="@buscar">
-                    <span class="icon">🔍</span>
+                    <span class="icon"><i class="fas fa-search"></i></span>
                 </form>
             </div>
             <select name="tipo" class="filter-select" onchange="window.location.href='@Url.Action("Index", "Vehiculos")?tipo=' + this.value + '&buscar=@buscar'">
@@ -556,21 +574,13 @@
                 {
                     <div class="vehicle-card">
                         <div class="vehicle-icon">
-                            @if (vehiculo.Tipo == "Auto")
+                            @if (vehiculo.Tipo == "Carro" || vehiculo.Tipo == "Auto" || vehiculo.Tipo == "SUV" || vehiculo.Tipo == "Camión")
                             {
-                                <span>🚗</span>
-                            }
-                            else if (vehiculo.Tipo == "SUV")
-                            {
-                                <span>🚙</span>
-                            }
-                            else if (vehiculo.Tipo == "Camión")
-                            {
-                                <span>🚚</span>
+                                <i class="fas fa-car"></i>
                             }
                             else
                             {
-                                <span>🏍️</span>
+                                <i class="fas fa-motorcycle"></i>
                             }
                         </div>
 
@@ -589,11 +599,11 @@
 
                         @if (vehiculo.Estado == "Dentro")
                         {
-                            <span class="vehicle-status status-activo">🟢 Dentro</span>
+                            <span class="vehicle-status status-activo"><i class="fas fa-check-circle"></i> Dentro</span>
                         }
                         else
                         {
-                            <span class="vehicle-status status-fuera">🔴 Fuera</span>
+                            <span class="vehicle-status status-fuera"><i class="fas fa-times-circle"></i> Fuera</span>
                         }
                     </div>
                 }

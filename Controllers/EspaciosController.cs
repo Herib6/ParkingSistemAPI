@@ -54,7 +54,8 @@ namespace ParkingSystemAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetVehiculosDisponibles()
+        [HttpGet]
+        public IActionResult GetVehiculosDisponibles(string? tipoEspacio = "Carro")
         {
             // Obtener vehículos que NO están dentro (sin registro activo)
             var vehiculosAdentro = _context.Registros
@@ -64,10 +65,21 @@ namespace ParkingSystemAPI.Controllers
                 .ToList();
 
             var vehiculosDisponibles = _context.Vehiculos
-                .Where(v => !vehiculosAdentro.Contains(v.Id))
+                .Where(v => !vehiculosAdentro.Contains(v.Id) && v.Tipo == tipoEspacio)
                 .ToList();
 
             return Json(new { success = true, vehiculos = vehiculosDisponibles });
+        }
+
+        [HttpGet]
+        public IActionResult GetTipoEspacio(int espacioId)
+        {
+            var espacio = _context.Espacios.FirstOrDefault(e => e.Id == espacioId);
+            if (espacio != null)
+            {
+                return Json(new { success = true, tipoEspacio = espacio.TipoEspacio ?? "Carro" });
+            }
+            return Json(new { success = false, message = "Espacio no encontrado" });
         }
 
         [HttpPost]
@@ -155,6 +167,44 @@ namespace ParkingSystemAPI.Controllers
             }
 
             return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public IActionResult SincronizarDatos()
+        {
+            try
+            {
+                // Actualizar vehículos Camioneta a Carro
+                var vehiculosCamioneta = _context.Vehiculos.Where(v => v.Tipo == "Camioneta").ToList();
+                foreach (var v in vehiculosCamioneta)
+                {
+                    v.Tipo = "Carro";
+                }
+
+                // Agregar espacios para motos si no existen
+                var espaciosMoto = _context.Espacios.Where(e => e.TipoEspacio == "Moto").Count();
+                if (espaciosMoto == 0)
+                {
+                    // Crear 10 espacios para motos
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        _context.Espacios.Add(new Espacio
+                        {
+                            Numero = 500 + i,
+                            Estado = "Disponible",
+                            TipoEspacio = "Moto",
+                            SensorId = i
+                        });
+                    }
+                }
+
+                _context.SaveChanges();
+                return Json(new { success = true, message = "Datos sincronizados correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
     }
 }

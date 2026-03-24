@@ -10,6 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -281,7 +282,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>📋 Detalles del Vehículo</h1>
+        <h1><i class="fas fa-clipboard"></i> Detalles del Vehículo</h1>
         <div>
             <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Cerrar Sesión</a>
         </div>
@@ -319,17 +320,14 @@
                     <div class="info-value">
                         @switch (Model?.Tipo)
                         {
+                            case "Carro":
                             case "Auto":
-                                <span><span class="type-icon">🚗</span>Auto</span>
-                                break;
                             case "SUV":
-                                <span><span class="type-icon">🚙</span>SUV</span>
+                            case "Camión":
+                                <span><span class="type-icon"><i class="fas fa-car"></i></span>Carro</span>
                                 break;
                             case "Moto":
-                                <span><span class="type-icon">🏍️</span>Moto</span>
-                                break;
-                            case "Camión":
-                                <span><span class="type-icon">🚚</span>Camión</span>
+                                <span><span class="type-icon"><i class="fas fa-motorcycle"></i></span>Moto</span>
                                 break;
                             default:
                                 <span>@Model?.Tipo</span>
@@ -359,7 +357,7 @@
 
         <!-- INFORMACIÓN DE AUDITORÍA -->
         <div class="card">
-            <div class="card-title">📊 Información de Auditoría</div>
+            <div class="card-title"><i class="fas fa-chart-bar"></i> Información de Auditoría</div>
             <div class="audit-info">
                 <div class="audit-item">
                     <span class="audit-label">Creado:</span> 

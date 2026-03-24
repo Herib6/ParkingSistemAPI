@@ -10,6 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -213,11 +214,8 @@
                 <label for="Tipo">🚗 Tipo de Vehículo *</label>
                 <select id="Tipo" name="Tipo" required>
                     <option value="">-- Selecciona un tipo --</option>
-                    <option value="Auto" @(Model?.Tipo == "Auto" ? "selected" : "")>Auto</option>
-                    <option value="SUV" @(Model?.Tipo == "SUV" ? "selected" : "")>SUV</option>
+                    <option value="Carro" @(Model?.Tipo == "Carro" || Model?.Tipo == "Auto" || Model?.Tipo == "SUV" ? "selected" : "")>Carro</option>
                     <option value="Moto" @(Model?.Tipo == "Moto" ? "selected" : "")>Moto</option>
-                    <option value="Camión" @(Model?.Tipo == "Camión" ? "selected" : "")>Camión</option>
-                    <option value="Otro" @(Model?.Tipo == "Otro" ? "selected" : "")>Otro</option>
                 </select>
                 @Html.ValidationMessageFor(m => m.Tipo)
             </div>

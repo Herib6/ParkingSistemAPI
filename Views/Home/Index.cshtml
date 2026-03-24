@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - PARKINGPRO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -37,6 +38,20 @@
             font-size: 24px;
             font-weight: 700;
             letter-spacing: 1px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #8B2E2E;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .navbar-right {
@@ -260,12 +275,12 @@
 <body>
     <div class="navbar">
         <div class="navbar-left">
-            <span>🚗</span>
+            <div class="logo"><i class="fas fa-parking"></i></div>
             <span>PARKINGPRO</span>
         </div>
         <div class="navbar-right">
             <div class="user-info">
-                <div class="user-icon">👤</div>
+                <div class="user-icon"><i class="fas fa-user-circle"></i></div>
                 <div>
                     <div style="font-size: 12px; opacity: 0.8;">Usuario</div>
                     <strong>@Context.Session.GetString("NombreUsuario")</strong>
@@ -283,17 +298,17 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">📋</div>
+                <div class="stat-icon"><i class="fas fa-list"></i></div>
                 <div class="stat-number">@ViewBag.TotalRegistros</div>
                 <div class="stat-label">Registros Totales</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🚗</div>
+                <div class="stat-icon"><i class="fas fa-car"></i></div>
                 <div class="stat-number">@ViewBag.TotalVehiculos</div>
                 <div class="stat-label">Vehículos Registrados</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">📍</div>
+                <div class="stat-icon"><i class="fas fa-map-pin"></i></div>
                 <div class="stat-number">@ViewBag.EspaciosDisponibles</div>
                 <div class="stat-label">Espacios Disponibles</div>
             </div>
@@ -305,7 +320,7 @@
             <div class="module-grid">
                 <div class="module-card">
                     <div class="module-header">
-                        <span class="module-icon">🚗</span>
+                        <span class="module-icon"><i class="fas fa-car"></i></span>
                         <h3 class="module-title">Gestión de Vehículos</h3>
                         <p class="module-description">Registra, edita y visualiza información de todos los vehículos</p>
                     </div>
@@ -316,7 +331,7 @@
 
                 <div class="module-card">
                     <div class="module-header">
-                        <span class="module-icon">📍</span>
+                        <span class="module-icon"><i class="fas fa-map-pin"></i></span>
                         <h3 class="module-title">Gestión de Espacios</h3>
                         <p class="module-description">Visualiza la disponibilidad y registra entrada/salida de vehículos</p>
                     </div>
@@ -327,7 +342,7 @@
 
                 <div class="module-card">
                     <div class="module-header">
-                        <span class="module-icon">📊</span>
+                        <span class="module-icon"><i class="fas fa-chart-line"></i></span>
                         <h3 class="module-title">Historial de Movimientos</h3>
                         <p class="module-description">Consulta todos los registros de entrada y salida de vehículos</p>
                     </div>
