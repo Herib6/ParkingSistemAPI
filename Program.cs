@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ParkingSystemAPI.Data;
+using ParkingSystemAPI.Services;
 
 using System.Text.Json.Serialization;
 
@@ -8,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Configurar DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Registrar servicios de inyección de dependencias
+builder.Services.AddScoped<IVehiculoRepository, VehiculoRepository>();
+builder.Services.AddScoped<IVehiculoService, VehiculoService>();
 
 // Configurar JSON serialization para ignorar ciclos
 builder.Services.AddControllers()
@@ -18,8 +23,6 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddControllersWithViews();
-
-
 
 builder.Services.AddSession(options =>
 {
