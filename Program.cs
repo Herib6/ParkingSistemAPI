@@ -1,6 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using ParkingSystemAPI.Data;
+
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Configurar DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Configurar JSON serialization para ignorar ciclos
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+
 builder.Services.AddControllersWithViews();
+
+
 
 builder.Services.AddSession(options =>
 {
@@ -10,6 +29,7 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
+
 
 if (!app.Environment.IsDevelopment())
 {

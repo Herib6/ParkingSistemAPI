@@ -1,0 +1,305 @@
+@model ParkingSystemAPI.Models.Vehiculo
+
+@{
+    ViewData["Title"] = "Editar Vehículo";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .audit-info {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .audit-item {
+            margin-bottom: 5px;
+        }
+
+        .audit-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-dentro {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-fuera {
+            background-color: #cfe2ff;
+            color: #084298;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-cancel {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e8e8e8;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .read-only {
+            background-color: #f8f9fa;
+        }
+
+        .read-only:disabled {
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="@Url.Action("Index")" class="back-link">← Volver a Vehículos</a>
+
+        <h1>✏️ Editar Vehículo</h1>
+
+        <div class="audit-info">
+            <div class="audit-item">
+                <span class="audit-label">Estado:</span>
+                @if (Model?.Estado == "Dentro")
+                {
+                    <span class="status-badge status-dentro">🟢 Dentro del Parqueo</span>
+                }
+                else
+                {
+                    <span class="status-badge status-fuera">🔵 Fuera del Parqueo</span>
+                }
+            </div>
+            <div class="audit-item">
+                <span class="audit-label">Creado:</span> 
+                @Model?.FechaCreacion.ToString("dd/MM/yyyy HH:mm")
+            </div>
+            @if (Model?.FechaModificacion.HasValue == true)
+            {
+                <div class="audit-item">
+                    <span class="audit-label">Última modificación:</span>
+                    @Model.FechaModificacion.Value.ToString("dd/MM/yyyy HH:mm")
+                </div>
+            }
+        </div>
+
+        @if (ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+        {
+            <div class="alert alert-danger">
+                <strong>Error en la validación:</strong>
+                <ul>
+                    @foreach (var value in ViewData.ModelState.Values)
+                    {
+                        @foreach (var error in value.Errors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
+
+        <form method="post">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Id)
+
+            <!-- PLACA (Solo lectura) -->
+            <div class="form-group">
+                <label for="Placa">🔤 Placa</label>
+                <input type="text" 
+                       id="Placa" 
+                       name="Placa" 
+                       value="@Model?.Placa" 
+                       class="read-only"
+                       readonly
+                       disabled>
+                <div class="form-hint">La placa no puede ser modificada</div>
+            </div>
+
+            <!-- TIPO -->
+            <div class="form-group">
+                <label for="Tipo">🚗 Tipo de Vehículo</label>
+                <select id="Tipo" name="Tipo" required>
+                    <option value="">-- Selecciona un tipo --</option>
+                    <option value="Auto" @(Model?.Tipo == "Auto" ? "selected" : "")>Auto</option>
+                    <option value="SUV" @(Model?.Tipo == "SUV" ? "selected" : "")>SUV</option>
+                    <option value="Moto" @(Model?.Tipo == "Moto" ? "selected" : "")>Moto</option>
+                    <option value="Camión" @(Model?.Tipo == "Camión" ? "selected" : "")>Camión</option>
+                    <option value="Otro" @(Model?.Tipo == "Otro" ? "selected" : "")>Otro</option>
+                </select>
+            </div>
+
+            <!-- COLOR -->
+            <div class="form-group">
+                <label for="Color">🎨 Color</label>
+                <input type="text" 
+                       id="Color" 
+                       name="Color" 
+                       placeholder="Ej: Rojo, Azul, Negro" 
+                       value="@Model?.Color"
+                       required>
+            </div>
+
+            <!-- ESTADO (Solo lectura - no se puede cambiar aquí) -->
+            <div class="form-group">
+                <label for="Estado">📍 Estado</label>
+                <input type="text" 
+                       id="Estado" 
+                       value="@Model?.Estado" 
+                       class="read-only"
+                       readonly
+                       disabled>
+                <div class="form-hint">El estado se actualiza automáticamente con entrada/salida</div>
+            </div>
+
+            <!-- BOTONES -->
+            <div class="btn-group">
+                <button type="submit" class="btn btn-submit">💾 Guardar Cambios</button>
+                <a href="@Url.Action("Index")" class="btn btn-cancel">✕ Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

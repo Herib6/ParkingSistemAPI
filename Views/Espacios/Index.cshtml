@@ -1,0 +1,805 @@
+@model List<ParkingSystemAPI.Models.Espacio>
+@using ParkingSystemAPI.Models
+
+@{
+    ViewData["Title"] = "Gestión de Espacios";
+    var registros = ViewBag.Registros as List<Registro> ?? new List<Registro>();
+    var disponibles = ViewBag.EspaciosDisponibles ?? 0;
+    var ocupados = ViewBag.EspaciosOcupados ?? 0;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 80px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-info h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .parking-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .parking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 15px;
+        }
+
+        .parking-space {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .parking-space:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .parking-space.disponible {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .parking-space.ocupado {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+        }
+
+        .activity-sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+
+        .activity-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-placa {
+            font-weight: 700;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .activity-meta {
+            color: #999;
+            margin-top: 3px;
+        }
+
+        .activity-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .type-entrada {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .type-salida {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+
+        .empty-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* MODAL STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 450px;
+            animation: slideUp 0.3s ease;
+            overflow: hidden;
+        }
+
+        @@keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .modal-close:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102,126,234,0.2);
+        }
+
+        .vehicle-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .vehicle-info p {
+            margin: 8px 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .vehicle-info strong {
+            color: #333;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .btn-cancel {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e0e0e0;
+        }
+
+        .error-message {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @@media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .parking-grid {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            }
+            
+            .header-stats {
+                flex-direction: column;
+                gap: 15px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🅿️ Gestión de Espacios</h1>
+        <div class="navbar-right">
+            <span>Bienvenido</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Cerrar Sesión</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="@Url.Action("Index", "Home")" class="back-link">← Volver al Dashboard</a>
+
+        <div class="header-section">
+            <div class="header-info">
+                <h2>Estado del Parqueo</h2>
+                <p>Visualiza y administra todos los espacios disponibles</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <div class="stat-number">@disponibles</div>
+                    <div class="stat-label">Disponibles</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">@ocupados</div>
+                    <div class="stat-label">Ocupados</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">@(disponibles + ocupados)</div>
+                    <div class="stat-label">Total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- GRID DE ESPACIOS -->
+            <div class="parking-section">
+                <div class="section-title">🚗 Distribución de Espacios</div>
+                @if (Model != null && Model.Any())
+                {
+                    <div class="parking-grid">
+                        @foreach (var espacio in Model.OrderBy(e => e.Numero))
+                        {
+                            <div class="parking-space @(espacio.Estado == "Disponible" ? "disponible" : "ocupado")"
+                                 onclick="manejarClickEspacio(@espacio.Id, @espacio.Numero, '@espacio.Estado')"
+                                 title="Espacio @espacio.Numero - @espacio.Estado">
+                                @espacio.Numero
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-message">
+                        <div class="empty-icon">🅿️</div>
+                        <p>No hay espacios disponibles</p>
+                    </div>
+                }
+            </div>
+
+            <!-- ACTIVIDAD RECIENTE -->
+            <div class="activity-sidebar">
+                <div class="section-title">⏰ Actividad Reciente</div>
+                @if (registros.Any())
+                {
+                    @foreach (var registro in registros.Take(8))
+                    {
+                        <div class="activity-item">
+                            <div class="activity-placa">Veh. @registro.VehiculoId</div>
+                            <div class="activity-meta">
+                                Espacio @registro.EspacioId
+                                @if (registro.FechaSalida.HasValue)
+                                {
+                                    <span class="activity-type type-salida">Salida</span>
+                                    <br><span>@registro.FechaSalida.Value.ToString("HH:mm")</span>
+                                }
+                                else
+                                {
+                                    <span class="activity-type type-entrada">Entrada</span>
+                                    <br><span>@registro.FechaEntrada.ToString("HH:mm")</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="text-align: center; color: #999; padding: 20px 0;">
+                        Sin actividad reciente
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRAR ENTRADA -->
+    <div id="modalEntrada" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📍 Registrar Entrada - Espacio <span id="espacioNum"></span></h2>
+                <button class="modal-close" onclick="cerrarModalEntrada()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="error-message" id="errorMsg"></div>
+                <div class="form-group">
+                    <label for="selectVehiculo">🚗 Selecciona un vehículo:</label>
+                    <select id="selectVehiculo">
+                        <option value="">-- Cargando vehículos --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="cerrarModalEntrada()">Cancelar</button>
+                <button class="btn-modal btn-submit" onclick="confirmarEntrada()">Registrar Entrada</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL VER VEHÍCULO EN ESPACIO -->
+    <div id="modalVehiculo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🚗 Vehículo en Espacio <span id="espacioNumVeh"></span></h2>
+                <button class="modal-close" onclick="cerrarModalVehiculo()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="vehicle-info" id="vehicleDetails"></div>
+                
+                <div class="cost-section" id="costSection" style="display: none;">
+                    <h3 style="margin-top: 25px; margin-bottom: 15px; color: #333; font-size: 16px;">💰 Registrar Salida</h3>
+                    
+                    <div class="form-group">
+                        <label>⏱️ Tiempo Estacionado:</label>
+                        <div style="background: #f0f0f0; padding: 12px; border-radius: 8px; color: #333; font-weight: 600;">
+                            <span id="tiempoEstacionado">--</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tarifaHora">💵 Tarifa por Hora:</label>
+                        <div style="display: flex; gap: 10px;">
+                            <span style="padding: 12px 15px; background: #f0f0f0; border-radius: 8px; font-weight: 600;">$</span>
+                            <div style="flex: 1; padding: 12px 15px; background: #f0f0f0; border-radius: 8px; font-weight: 600; color: #333;">
+                                100.00
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>💸 Costo Total:</label>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 8px; color: white; font-weight: 600; font-size: 18px; text-align: center;">
+                            $<span id="costoTotal">0.00</span>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn-modal btn-cancel" onclick="cerrarModalVehiculo()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let espacioActual = null;
+
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                cerrarModalEntrada();
+                cerrarModalVehiculo();
+            }
+        });
+
+        // Cerrar modal al hacer click fuera
+        document.getElementById('modalEntrada').addEventListener('click', function(event) {
+            if (event.target === this) cerrarModalEntrada();
+        });
+        document.getElementById('modalVehiculo').addEventListener('click', function(event) {
+            if (event.target === this) cerrarModalVehiculo();
+        });
+
+        function manejarClickEspacio(espacioId, numero, estado) {
+            espacioActual = { id: espacioId, numero: numero, estado: estado };
+
+            if (estado === 'Disponible') {
+                abrirModalEntrada(numero, espacioId);
+            } else {
+                abrirModalVehiculo(numero, espacioId);
+            }
+        }
+
+        function abrirModalEntrada(numero, espacioId) {
+            document.getElementById('espacioNum').textContent = numero;
+            document.getElementById('selectVehiculo').innerHTML = '<option value="">Cargando vehículos...</option>';
+            document.getElementById('errorMsg').classList.remove('show');
+
+            fetch('@Url.Action("GetVehiculosDisponibles", "Espacios")')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.vehiculos.length > 0) {
+                        let options = '<option value="">-- Selecciona un vehículo --</option>';
+                        data.vehiculos.forEach(v => {
+                            options += `<option value="${v.id}">${v.placa} (${v.tipo})</option>`;
+                        });
+                        document.getElementById('selectVehiculo').innerHTML = options;
+                    } else {
+                        document.getElementById('selectVehiculo').innerHTML = '<option value="">No hay vehículos disponibles</option>';
+                    }
+                });
+
+            document.getElementById('modalEntrada').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModalEntrada() {
+            document.getElementById('modalEntrada').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        function confirmarEntrada() {
+            const vehiculoId = document.getElementById('selectVehiculo').value;
+            if (!vehiculoId) {
+                mostrarError('Selecciona un vehículo');
+                return;
+            }
+
+            const espacioId = espacioActual.id;
+            fetch('@Url.Action("RegistrarEntrada", "Espacios")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `vehiculoId=${vehiculoId}&espacioId=${espacioId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cerrarModalEntrada();
+                    location.reload();
+                } else {
+                    mostrarError(data.message);
+                }
+            })
+            .catch(error => mostrarError('Error al registrar entrada'));
+        }
+
+        function mostrarError(mensaje) {
+            const errorEl = document.getElementById('errorMsg');
+            errorEl.textContent = mensaje;
+            errorEl.classList.add('show');
+        }
+
+        function abrirModalVehiculo(numero, espacioId) {
+            document.getElementById('espacioNumVeh').textContent = numero;
+            document.getElementById('costoTotal').textContent = '0.00';
+            actualizarCosto();
+
+            fetch(`@Url.Action("GetVehiculosPorEspacio", "Espacios")?espacioId=${espacioId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.vehiculo) {
+                        const v = data.vehiculo;
+                        document.getElementById('vehicleDetails').innerHTML = `
+                            <p><strong>Placa:</strong> ${v.placa}</p>
+                            <p><strong>Tipo:</strong> ${v.tipo}</p>
+                            <p><strong>Color:</strong> ${v.color}</p>
+                            <p><strong>Estado:</strong> <span style="color: #48bb78; font-weight: 600;">✓ En el parqueo</span></p>
+                        `;
+                        
+                        // Obtener información del registro (tiempo estacionado)
+                        fetch(`@Url.Action("GetRegistroInfo", "Espacios")?vehiculoId=${v.id}`)
+                            .then(response => response.json())
+                            .then(infoData => {
+                                if (infoData.success) {
+                                    window.vehiculoIdActual = v.id;
+                                    window.horasCompletas = infoData.horasCompletas;
+                                    window.minutos = infoData.minutos;
+                                    document.getElementById('tiempoEstacionado').textContent = infoData.tiempoFormato;
+                                    document.getElementById('costSection').style.display = 'block';
+                                    actualizarCosto();
+                                    
+                                    // Actualizar footer con botón de salida
+                                    document.getElementById('modalFooter').innerHTML = `
+                                        <button class="btn-modal btn-cancel" onclick="cerrarModalVehiculo()">Cancelar</button>
+                                        <button class="btn-modal btn-submit" onclick="confirmarSalida()">Registrar Salida</button>
+                                    `;
+                                }
+                            });
+                    }
+                });
+
+            document.getElementById('modalVehiculo').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModalVehiculo() {
+            document.getElementById('modalVehiculo').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            window.vehiculoIdActual = null;
+        }
+
+        function actualizarCosto() {
+            const TARIFA_HORA = 100; // 100 pesos por hora
+            const TARIFA_MEDIA_HORA = 50; // 50 pesos si hay más de 30 minutos
+            
+            const horasCompletas = window.horasCompletas || 0;
+            const minutos = window.minutos || 0;
+            
+            // Si es menos de 30 minutos, no cobra
+            if (horasCompletas === 0 && minutos < 30) {
+                document.getElementById('costoTotal').textContent = '0.00';
+                return;
+            }
+            
+            // Fórmula: (100 × horas completas) + (50 si minutos > 30)
+            let costoTotal = (TARIFA_HORA * horasCompletas);
+            
+            if (minutos > 30) {
+                costoTotal += TARIFA_MEDIA_HORA;
+            }
+            
+            document.getElementById('costoTotal').textContent = costoTotal.toFixed(2);
+        }
+
+        function confirmarSalida() {
+            const vehiculoId = window.vehiculoIdActual;
+            if (!vehiculoId) {
+                alert('Error: No se encontró el vehículo');
+                return;
+            }
+
+            // Mostrar confirmación con costo
+            const costoTotal = document.getElementById('costoTotal').textContent;
+            const tiempoMostrar = `${window.horasCompletas}h ${window.minutos}m`;
+            
+            if (confirm(`¿Confirmar salida del vehículo?\nCosto Total: $${costoTotal}\nTiempo: ${tiempoMostrar}`)) {
+                fetch('@Url.Action("RegistrarSalida", "Espacios")', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `vehiculoId=${vehiculoId}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`✓ Salida registrada\nCosto: $${costoTotal}\nTiempo: ${tiempoMostrar}`);
+                        cerrarModalVehiculo();
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error al registrar salida');
+                    console.error(error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+@model List<ParkingSystemAPI.Models.Registro>
+
+@{
+    ViewData["Title"] = "Registros de Estacionamiento";
+    var buscar = ViewBag.Buscar ?? "";
+    var fechaInicio = ViewBag.FechaInicio ?? "";
+    var fechaFin = ViewBag.FechaFin ?? "";
+    var total = ViewBag.Total ?? 0;
+    var activos = ViewBag.Activos ?? 0;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 80px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-info h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .control-group label {
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .control-group input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .control-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102,126,234,0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .btn-secondary {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e8e8e8;
+        }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: auto;
+            max-height: calc(100vh - 300px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        thead {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        thead th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #fafbfc;
+        }
+
+        .placa {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 13px;
+            background-color: #f0f0f0;
+            padding: 6px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-activo {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .badge-completado {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📋 Registros de Estacionamiento</h1>
+        <div class="navbar-right">
+            <span>Bienvenido</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Cerrar Sesión</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="@Url.Action("Index", "Home")" class="back-link">← Volver al Dashboard</a>
+
+        <div class="header-section">
+            <div class="header-info">
+                <h2>Historial de Movimientos</h2>
+                <p>Entradas, salidas y duración de estancia</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <div class="stat-number">@total</div>
+                    <div class="stat-label">Total de Registros</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">@activos</div>
+                    <div class="stat-label">Activos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">$@ViewBag.TotalCobrado</div>
+                    <div class="stat-label">Total Cobrado</div>
+                </div>
+            </div>
+        </div>
+
+        <form method="GET" class="controls">
+            <div class="control-group" style="flex: 2;">
+                <label for="buscar">🔍 Por Vehículo:</label>
+                <input type="text" id="buscar" name="buscar" placeholder="ID o placa..." value="@buscar">
+            </div>
+            
+            <div class="control-group">
+                <label for="fechaInicio">Desde:</label>
+                <input type="date" id="fechaInicio" name="fechaInicio" value="@fechaInicio">
+            </div>
+            
+            <div class="control-group">
+                <label for="fechaFin">Hasta:</label>
+                <input type="date" id="fechaFin" name="fechaFin" value="@fechaFin">
+            </div>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">🔎 Filtrar</button>
+                <a href="@Url.Action("Index", "Registros")" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </form>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Vehículo</th>
+                            <th>Espacio</th>
+                            <th>Fecha Entrada</th>
+                            <th>Fecha Salida</th>
+                            <th>Duración</th>
+                            <th>Costo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var registro in Model)
+                        {
+                            var duracion = registro.FechaSalida.HasValue
+                                ? (registro.FechaSalida.Value - registro.FechaEntrada).ToString(@"hh\:mm")
+                                : "-";
+                            
+                            <tr>
+                                <td>#@registro.Id</td>
+                                <td><span class="placa">VEH-@registro.VehiculoId</span></td>
+                                <td>🅿️ Esp. @registro.EspacioId</td>
+                                <td>@registro.FechaEntrada.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @if (registro.FechaSalida.HasValue)
+                                    {
+                                        @registro.FechaSalida.Value.ToString("dd/MM/yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #e74c3c;">-</span>
+                                    }
+                                </td>
+                                <td>@duracion</td>
+                                <td>
+                                    @if (registro.Costo.HasValue)
+                                    {
+                                        <span style="font-weight: 600; color: #48bb78;">$@registro.Costo.Value.ToString("0.00")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #ccc;">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (registro.FechaSalida.HasValue)
+                                    {
+                                        <span class="badge badge-completado">✓ Completado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-activo">🔵 Activo</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <div class="empty-state-title">No hay registros</div>
+                    <p>No se encontraron registros que coincidan con tus criterios de búsqueda</p>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html>

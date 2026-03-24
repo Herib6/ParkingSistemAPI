@@ -1,0 +1,240 @@
+@model ParkingSystemAPI.Models.Vehiculo
+
+@{
+    ViewData["Title"] = "Eliminar Vehículo";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+        }
+
+        .warning-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .vehicle-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .vehicle-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .vehicle-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .vehicle-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .vehicle-value {
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .vehicle-placa {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #667eea;
+            background-color: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .danger-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .danger-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .danger-list {
+            list-style-position: inside;
+            margin-left: 0;
+        }
+
+        .danger-list li {
+            margin-bottom: 5px;
+        }
+
+        .confirmation-text {
+            color: #666;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-cancel {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e8e8e8;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="@Url.Action("Index")" class="back-link">← Volver a Vehículos</a>
+
+        <div class="warning-icon">⚠️</div>
+        <h1>Eliminar Vehículo</h1>
+
+        <div class="vehicle-card">
+            <div class="vehicle-item">
+                <span class="vehicle-label">Placa:</span>
+                <span class="vehicle-value"><span class="vehicle-placa">@Model?.Placa</span></span>
+            </div>
+            <div class="vehicle-item">
+                <span class="vehicle-label">Tipo:</span>
+                <span class="vehicle-value">@Model?.Tipo</span>
+            </div>
+            <div class="vehicle-item">
+                <span class="vehicle-label">Color:</span>
+                <span class="vehicle-value">@Model?.Color</span>
+            </div>
+            <div class="vehicle-item">
+                <span class="vehicle-label">Estado:</span>
+                <span class="vehicle-value">
+                    @if (Model?.Estado == "Dentro")
+                    {
+                        <span style="color: #155724; font-weight: 600;">🟢 Dentro</span>
+                    }
+                    else
+                    {
+                        <span style="color: #084298; font-weight: 600;">🔵 Fuera</span>
+                    }
+                </span>
+            </div>
+        </div>
+
+        <div class="danger-message">
+            <div class="danger-title">⚠️ Aviso Importante</div>
+            <ul class="danger-list">
+                <li>Esta acción <strong>no se puede deshacer</strong></li>
+                <li>Se eliminarán todos los datos asociados a este vehículo</li>
+                <li>El historial de movimientos se perderá</li>
+                <li>No se puede eliminar si tiene registros activos o recientes (últimos 30 días)</li>
+            </ul>
+        </div>
+
+        <p class="confirmation-text">
+            ¿Estás seguro de que deseas eliminar este vehículo? 
+            <strong>Esta acción es irreversible.</strong>
+        </p>
+
+        <form method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-delete">🗑️ Sí, Eliminar</button>
+                <a href="@Url.Action("Index")" class="btn btn-cancel">✕ Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
