@@ -318,5 +318,28 @@ namespace ParkingSystemAPI.Controllers
                 return Json(new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        public IActionResult ObtenerEstadosEspacios()
+        {
+            try
+            {
+                var espacios = _context.Espacios
+                    .Select(e => new 
+                    { 
+                        id = e.Id,
+                        numero = e.Numero,
+                        estado = e.Estado,
+                        tipoEspacio = e.TipoEspacio
+                    })
+                    .ToList();
+
+                return Json(new { success = true, espacios = espacios });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
     }
 }

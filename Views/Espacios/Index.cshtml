@@ -215,13 +215,30 @@
             color: white;
         }
 
-        .parking-space.reservado {
+        .parking-space.transiendo {
             background: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
             color: white;
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+                transform: scale(1.05);
+            }
         }
 
         .parking-space.ocupado {
             background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+        }
+
+        .parking-space.reservado {
+            background: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
             color: white;
         }
 
@@ -535,17 +552,17 @@
                             string estadoClass = "disponible";
                             string estadoDisplay = "Disponible";
                             
-                            if (espacio.SensorActivado)
+                            if (espacio.Estado == "Transiendo")
                             {
-                                estadoClass = "ocupado";
-                                estadoDisplay = "Sensor Activo";
+                                estadoClass = "transiendo";
+                                estadoDisplay = "Detectando (5s)";
                             }
                             else if (espacio.Estado == "Ocupado")
                             {
-                                estadoClass = "reservado";
-                                estadoDisplay = "Reservado";
+                                estadoClass = "ocupado";
+                                estadoDisplay = "Ocupado";
                             }
-                            <div class="parking-space @estadoClass"
+                            <div class="parking-space @estadoClass" data-espacio-id="@espacio.Id"
                                  onclick="manejarClickEspacio(@espacio.Id, @espacio.Numero, '@espacio.Estado')"
                                  title="Espacio @espacio.Numero - @estadoDisplay (Sensor: @espacio.SensorId)">
                                 <i class="fas fa-car space-icon"></i>
@@ -575,17 +592,17 @@
                             string estadoClass = "disponible";
                             string estadoDisplay = "Disponible";
                             
-                            if (espacio.SensorActivado)
+                            if (espacio.Estado == "Transiendo")
                             {
-                                estadoClass = "ocupado";
-                                estadoDisplay = "Sensor Activo";
+                                estadoClass = "transiendo";
+                                estadoDisplay = "Detectando (5s)";
                             }
                             else if (espacio.Estado == "Ocupado")
                             {
-                                estadoClass = "reservado";
-                                estadoDisplay = "Reservado";
+                                estadoClass = "ocupado";
+                                estadoDisplay = "Ocupado";
                             }
-                            <div class="parking-space @estadoClass"
+                            <div class="parking-space @estadoClass" data-espacio-id="@espacio.Id"
                                  onclick="manejarClickEspacio(@espacio.Id, @espacio.Numero, '@espacio.Estado')"
                                  title="Espacio @espacio.Numero - @estadoDisplay (Sensor: @espacio.SensorId)">
                                 <i class="fas fa-motorcycle space-icon"></i>
@@ -910,6 +927,33 @@
                 });
             }
         }
+
+        // ==================== POLLING AUTO - ACTUALIZAR ESTADOS ====================
+        setInterval(function() {
+            fetch('@Url.Action("ObtenerEstadosEspacios", "Espacios")')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.espacios) {
+                        data.espacios.forEach(espacio => {
+                            const element = document.querySelector(`.parking-space[data-espacio-id="${espacio.id}"]`);
+                            if (element) {
+                                // Remover clases previas de estado
+                                element.classList.remove('disponible', 'transiendo', 'ocupado', 'reservado');
+                                
+                                // Agregar la clase correspondiente al nuevo estado
+                                if (espacio.estado === 'Transiendo') {
+                                    element.classList.add('transiendo');
+                                } else if (espacio.estado === 'Ocupado') {
+                                    element.classList.add('ocupado');
+                                } else {
+                                    element.classList.add('disponible');
+                                }
+                            }
+                        });
+                    }
+                })
+                .catch(error => console.error('Error actualizando estados:', error));
+        }, 2000); // Actualizar cada 2 segundos
     </script>
 </body>
 </html>

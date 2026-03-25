@@ -12,11 +12,13 @@ namespace ParkingSystemAPI.Services
     {
         private readonly IVehiculoRepository _repository;
         private readonly AppDbContext _context;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public VehiculoService(IVehiculoRepository repository, AppDbContext context)
+        public VehiculoService(IVehiculoRepository repository, AppDbContext context, IServiceScopeFactory serviceScopeFactory)
         {
             _repository = repository;
             _context = context;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         // ==================== LECTURA ====================
@@ -186,7 +188,7 @@ namespace ParkingSystemAPI.Services
                 if (otraInstancia != null)
                     return (false, "Existe otro vehículo con la misma placa activo en el parqueo");
 
-                // 🔹 REGLA 3: Validar que el espacio esté disponible
+                // REGLA 3: Validar que el espacio esté disponible
                 var espacio = await _context.Espacios.FirstOrDefaultAsync(e => e.Id == espacioId);
                 if (espacio == null)
                     return (false, "Espacio no encontrado");
@@ -217,11 +219,16 @@ namespace ParkingSystemAPI.Services
                 vehiculo.FechaModificacion = DateTime.Now;
                 _context.Vehiculos.Update(vehiculo);
 
-                // Actualizar estado del espacio
-                espacio.Estado = "Ocupado";
+                // Actualizar estado del espacio: AMARILLO (Transiendo) por 15 segundos
+                espacio.Estado = "Transiendo";
+                espacio.FechaTransicion = DateTime.Now;
                 _context.Espacios.Update(espacio);
 
                 await _context.SaveChangesAsync();
+
+                // Iniciar cambio automático de color después de 15 segundos
+                _ = CambiarEstadoAutomaticamenteAsync(espacioId);
+
                 return (true, "Entrada registrada exitosamente");
             }
             catch (Exception ex)
@@ -238,7 +245,7 @@ namespace ParkingSystemAPI.Services
                 if (vehiculo == null)
                     return (false, "Vehículo no encontrado");
 
-                // 🔹 REGLA 1: Validar que esté "Dentro" para poder salir
+                // REGLA 1: Validar que esté "Dentro" para poder salir
                 if (vehiculo.Estado != "Dentro")
                     return (false, "El vehículo no está dentro del parqueo");
 
@@ -258,11 +265,12 @@ namespace ParkingSystemAPI.Services
                 vehiculo.FechaModificacion = DateTime.Now;
                 _context.Vehiculos.Update(vehiculo);
 
-                // Liberar espacio
+                // Liberar espacio: VERDE (Disponible)
                 var espacio = await _context.Espacios.FirstOrDefaultAsync(e => e.Id == registro.EspacioId);
                 if (espacio != null)
                 {
                     espacio.Estado = "Disponible";
+                    espacio.FechaTransicion = null;
                     _context.Espacios.Update(espacio);
                 }
 
@@ -302,6 +310,39 @@ namespace ParkingSystemAPI.Services
                 return (false, "El color es obligatorio");
 
             return (true, "Validación exitosa");
+        }
+
+        // ==================== SIMULACIÓN DE SENSORES ====================
+        // Cambia automáticamente el estado de Transiendo (Amarillo) a Ocupado (Rojo) después de 5 segundos
+        private async Task CambiarEstadoAutomaticamenteAsync(int espacioId)
+        {
+            try
+            {
+                // Esperar 5 segundos
+                await Task.Delay(5000);
+
+                // Crear un nuevo scope para obtener un nuevo DbContext
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    
+                    // Obtener el espacio nuevamente para verificar que sigue en estado "Transiendo"
+                    var espacio = await dbContext.Espacios.FirstOrDefaultAsync(e => e.Id == espacioId);
+                    if (espacio != null && espacio.Estado == "Transiendo")
+                    {
+                        // Cambiar a ROJO (Ocupado)
+                        espacio.Estado = "Ocupado";
+                        dbContext.Espacios.Update(espacio);
+                        await dbContext.SaveChangesAsync();
+                        Console.WriteLine($"✓ Espacio {espacioId} cambió a ROJO (Ocupado)");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log del error si es necesario
+                Console.WriteLine($"Error al cambiar estado automático del espacio {espacioId}: {ex.Message}");
+            }
         }
     }
 }
