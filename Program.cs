@@ -10,11 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar servicios de inyección de dependencias
+// Registrar servicios
 builder.Services.AddScoped<IVehiculoRepository, VehiculoRepository>();
 builder.Services.AddScoped<IVehiculoService, VehiculoService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
-// Configurar JSON serialization para ignorar ciclos
+// Configurar JSON serialization
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -32,7 +34,6 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
-
 
 if (!app.Environment.IsDevelopment())
 {

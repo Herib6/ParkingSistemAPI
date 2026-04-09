@@ -9,7 +9,7 @@ namespace ParkingSystemAPI.Data
             // Verificar si ya existen datos
             if (context.Usuarios.Any() || context.Vehiculos.Any() || context.Espacios.Any())
             {
-                return; // Los datos ya existen, no hacer nada
+                return;
             }
 
             // Crear usuario de prueba
@@ -17,8 +17,10 @@ namespace ParkingSystemAPI.Data
             {
                 Nombre = "Admin",
                 Email = "admin@parking.com",
-                Contrasena = "admin123", // En producción, esto debe ser hasheado
-                Rol = "Admin"
+                ContraseniaHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+                Rol = "Administrador",
+                EmailVerificado = true,
+                FechaRegistro = DateTime.Now
             };
             context.Usuarios.Add(usuario);
             context.SaveChanges();

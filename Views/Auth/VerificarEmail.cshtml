@@ -1,0 +1,206 @@
+@{
+    ViewData["Title"] = "Verificar Email";
+    string? email = ViewBag.Email;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background-color: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="email"], input[type="hidden"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .error {
+            background-color: #fee;
+            border-left: 4px solid #f56565;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            color: #c3322c;
+        }
+
+        .success {
+            background-color: #efe;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            color: #22543d;
+        }
+
+        .link-back {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link-back a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .link-back a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .resend-note {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        @@media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✉️ Verificar Email</h1>
+        <p class="subtitle">Completa la verificación de tu cuenta</p>
+
+        @if (!string.IsNullOrEmpty(ViewBag.Error))
+        {
+            <div class="error">
+                <strong>Error:</strong> @ViewBag.Error
+            </div>
+        }
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="success">
+                @TempData["Success"]
+            </div>
+        }
+
+        <div class="info-box">
+            <strong>📧 Email:</strong><br>
+            @email
+        </div>
+
+        <form method="post">
+            <input type="hidden" name="email" value="@email">
+
+            <div class="form-group">
+                <label for="codigo">Código de Verificación</label>
+                <input type="text" id="codigo" name="codigo" placeholder="Ingresa el código de 6 digitos" 
+                       maxlength="6" inputmode="numeric" required autofocus>
+            </div>
+
+            <button type="submit" class="btn-submit">Verificar Email</button>
+        </form>
+
+        <div class="resend-note">
+            💡 Revisa tu carpeta de spam si no ves el correo
+        </div>
+
+        <div class="link-back">
+            <a href="@Url.Action("Login", "Auth")">Volver al Login</a>
+        </div>
+    </div>
+</body>
+</html>

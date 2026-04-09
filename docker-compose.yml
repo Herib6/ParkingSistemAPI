@@ -23,6 +23,15 @@ services:
     environment:
       - ADMINER_DEFAULT_SERVER=sqlserver
 
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - parking-network
+    command: ["--smtp-auth-allow-insecure"]
+
 volumes:
   sqlserver_data:
 
